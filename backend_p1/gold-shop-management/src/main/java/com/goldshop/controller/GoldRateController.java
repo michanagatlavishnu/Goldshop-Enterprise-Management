@@ -1,0 +1,32 @@
+package com.goldshop.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.goldshop.entity.GoldRate;
+import com.goldshop.service.GoldRateService;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/goldrates")
+public class GoldRateController {
+
+    @Autowired
+    private GoldRateService service;
+
+    @GetMapping
+    public GoldRate getRates() {
+
+        return service.getRates();
+
+    }
+
+    @PutMapping
+    public GoldRate updateRates(
+            @RequestBody GoldRate goldRate) {
+
+        return service.updateRates(goldRate);
+
+    }
+
+}
