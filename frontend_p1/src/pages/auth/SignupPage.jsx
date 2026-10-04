@@ -41,10 +41,16 @@ export default function SignupPage() {
         navigate('/login');
       }, 2000);
     } catch (err) {
-      if (err.response && err.response.status === 409) {
-        setError('Email already exists.');
+      if (!err.response) {
+        setError('Unable to connect to the server. Please try again.');
+      } else if (err.response.status === 409) {
+        setError('An account with this email already exists.');
+      } else if (err.response.status === 400) {
+        setError(err.response.data?.message || 'Validation failed. Please check your inputs.');
+      } else if (err.response.status === 500) {
+        setError('Authentication service is temporarily unavailable.');
       } else {
-        setError(err.response?.data?.message || 'An error occurred during registration.');
+        setError(err.response.data?.message || 'An error occurred during registration.');
       }
     } finally {
       setLoading(false);

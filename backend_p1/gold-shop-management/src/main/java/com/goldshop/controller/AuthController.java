@@ -35,7 +35,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+            java.util.Map<String, Object> err = new java.util.HashMap<>();
+            err.put("status", 409);
+            err.put("message", "An account with this email already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
         }
 
         User user = new User();
@@ -46,7 +49,10 @@ public class AuthController {
         
         userRepository.save(user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+        java.util.Map<String, Object> resp = new java.util.HashMap<>();
+        resp.put("status", 201);
+        resp.put("message", "User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
 
     @PostMapping("/login")

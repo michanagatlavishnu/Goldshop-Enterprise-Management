@@ -74,8 +74,53 @@ public class JwtService {
                 .getBody();
     }
 
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        if (secretKey == null || secretKey.trim().isEmpty()) {
+            throw new IllegalStateException("JWT_SECRET is missing or empty.");
+        }
+        if ("replace-with-a-very-long-secure-secret-key-for-jwt-generation-in-production".equals(secretKey)) {
+            throw new IllegalStateException("JWT_SECRET is using the insecure default value. Must be overridden in production environment.");
+        }
+        
+        String trimmed = secretKey.trim();
+        byte[] keyBytes = null;
+        
+        try {
+            byte[] decoded = Decoders.BASE64.decode(trimmed);
+            if (decoded.length >= 32) {
+                keyBytes = decoded;
+            }
+        } catch (Exception ignored) {
+        }
+        
+        if (keyBytes == null) {
+            byte[] rawBytes = trimmed.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            if (rawBytes.length >= 32) {
+                keyBytes = rawBytes;
+            }
+        }
+        
+        if (keyBytes == null) {
+            throw new IllegalStateException("JWT_SECRET must contain at least 32 secure bytes (256 bits). Provide a stronger secret.");
+        }
+    }
+
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        String trimmed = secretKey.trim();
+        byte[] keyBytes = null;
+        try {
+            byte[] decoded = Decoders.BASE64.decode(trimmed);
+            if (decoded.length >= 32) {
+                keyBytes = decoded;
+            }
+        } catch (Exception ignored) {
+        }
+        
+        if (keyBytes == null) {
+            keyBytes = trimmed.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        }
+        
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

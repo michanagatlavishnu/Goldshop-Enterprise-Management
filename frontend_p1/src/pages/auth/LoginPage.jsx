@@ -31,10 +31,16 @@ export default function LoginPage() {
         navigate('/customer/home');
       }
     } catch (err) {
-      if (err.response && err.response.status === 401) {
+      if (!err.response) {
+        setError('Unable to connect to the server. Please try again.');
+      } else if (err.response.status === 401) {
         setError('Invalid email or password.');
+      } else if (err.response.status === 403) {
+        setError('Your account is inactive or you do not have permission.');
+      } else if (err.response.status === 500) {
+        setError('Authentication service is temporarily unavailable.');
       } else {
-        setError('An error occurred during login. Please try again.');
+        setError(err.response.data?.message || 'An error occurred during login. Please try again.');
       }
     } finally {
       setLoading(false);
