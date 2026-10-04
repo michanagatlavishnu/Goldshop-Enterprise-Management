@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api';
 import { Modal } from "react-bootstrap";
 import "./PurchasePage.css";
 
@@ -37,7 +37,7 @@ function PurchasePage() {
   const loadPurchases = () => {
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/purchases`)
+      .get(`/purchases`)
       .then(async (response) => {
 
         const purchaseData = response.data;
@@ -54,7 +54,7 @@ function PurchasePage() {
 
             const customerRes =
               await axios.get(
-                `${import.meta.env.VITE_API_URL}/customers/${item.customerId}`
+                `/customers/${item.customerId}`
               );
 
             customerTemp[item.customerId] =
@@ -70,7 +70,7 @@ function PurchasePage() {
 
             const ornamentRes =
               await axios.get(
-                `${import.meta.env.VITE_API_URL}/ornaments/${item.ornamentId}`
+                `/ornaments/${item.ornamentId}`
               );
 
             ornamentTemp[item.ornamentId] =
@@ -132,7 +132,7 @@ function PurchasePage() {
 
     axios
       .post(
-        `${import.meta.env.VITE_API_URL}/purchases`,
+        `/purchases`,
         purchase
       )
       .then(() => {
@@ -160,7 +160,7 @@ function PurchasePage() {
 
     axios
       .put(
-        `${import.meta.env.VITE_API_URL}/purchases/${editId}`,
+        `/purchases/${editId}`,
         purchase
       )
       .then(() => {
@@ -193,7 +193,7 @@ function PurchasePage() {
 
     axios
       .delete(
-        `${import.meta.env.VITE_API_URL}/purchases/${id}`
+        `/purchases/${id}`
       )
       .then(() => {
 
@@ -235,7 +235,7 @@ function PurchasePage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/purchases/${searchPurchaseId}`
+        `/purchases/${searchPurchaseId}`
       )
       .then((response) => {
 

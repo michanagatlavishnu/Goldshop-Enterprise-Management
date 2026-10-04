@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api';
 import { Modal } from "react-bootstrap";
 import "./DashboardPage.css";
 
@@ -45,7 +45,7 @@ function DashboardPage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/dashboard/summary`
+        `/dashboard/summary`
       )
       .then((response) => {
 
@@ -60,7 +60,7 @@ function DashboardPage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/ornaments/low-stock`
+        `/ornaments/low-stock`
       )
       .then((response) => {
 
@@ -77,7 +77,7 @@ function DashboardPage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/goldrates`
+        `/goldrates`
       )
       .then((response) => {
 
@@ -116,7 +116,7 @@ function DashboardPage() {
 
     axios
       .put(
-        `${import.meta.env.VITE_API_URL}/goldrates`,
+        `/goldrates`,
         goldRates
       )
       .then(() => {

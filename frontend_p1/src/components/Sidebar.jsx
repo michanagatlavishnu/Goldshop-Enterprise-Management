@@ -39,42 +39,42 @@ function Sidebar() {
       <div className="d-flex flex-column">
 
         <Link
-          to="/dashboard"
+          to="/admin/dashboard"
           className="btn sidebar-btn text-start"
         >
           🏠 Dashboard
         </Link>
 
         <Link
-          to="/customers"
+          to="/admin/customers"
           className="btn sidebar-btn text-start"
         >
           👥 Customers
         </Link>
 
         <Link
-          to="/ornaments"
+          to="/admin/ornaments"
           className="btn sidebar-btn text-start"
         >
           💍 Ornaments
         </Link>
 
         <Link
-          to="/purchases"
+          to="/admin/purchases"
           className="btn sidebar-btn text-start"
         >
           🛒 Purchases
         </Link>
 
         <Link
-          to="/pending"
+          to="/admin/pending"
           className="btn sidebar-btn text-start"
         >
           💰 Pending Payments
         </Link>
 
         <Link
-          to="/reports"
+          to="/admin/reports"
           className="btn sidebar-btn text-start"
         >
           📊 Reports

@@ -30,10 +30,11 @@ public class PurchaseService {
     public Purchase getPurchaseById(Integer id) {
         return repo.findById(id).orElse(null);
     }
-    public List<Purchase> getPurchasesByCustomerName(
-            String name) {
-
+    public List<Purchase> getPurchasesByCustomerName(String name) {
         return repo.findByCustomerName(name);
+    }
 
+    public List<Purchase> getPurchasesByCustomerId(Integer customerId) {
+        return repo.findByCustomerId(customerId);
     }
 }

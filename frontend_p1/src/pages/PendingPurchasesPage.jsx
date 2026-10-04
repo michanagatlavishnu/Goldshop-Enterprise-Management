@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api';
 import "./PendingPurchasesPage.css";
 
 function PendingPurchasesPage() {
@@ -18,13 +18,13 @@ function PendingPurchasesPage() {
     loadPendingPurchases();
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/customers`)
+      .get(`/customers`)
       .then((response) =>
         setCustomers(response.data)
       );
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/ornaments`)
+      .get(`/ornaments`)
       .then((response) =>
         setOrnaments(response.data)
       );
@@ -35,7 +35,7 @@ function PendingPurchasesPage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/purchases/pending`
+        `/purchases/pending`
       )
       .then((response) => {
 
@@ -56,7 +56,7 @@ function PendingPurchasesPage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/purchases/customer/${searchName}`
+        `/purchases/customer/${searchName}`
       )
       .then((response) => {
 

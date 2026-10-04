@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api';
 import { Modal } from "react-bootstrap";
 import "./OrnamentPage.css";
 
@@ -29,7 +29,7 @@ function OrnamentPage() {
 
   const loadOrnaments = () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/ornaments`)
+      .get(`/ornaments`)
       .then((response) => {
         setOrnaments(response.data);
       })
@@ -41,7 +41,7 @@ function OrnamentPage() {
   const saveOrnament = () => {
     axios
       .post(
-        `${import.meta.env.VITE_API_URL}/ornaments`,
+        `/ornaments`,
         ornament
       )
       .then(() => {
@@ -61,7 +61,7 @@ function OrnamentPage() {
   const updateOrnament = () => {
     axios
       .put(
-        `${import.meta.env.VITE_API_URL}/ornaments/${editId}`,
+        `/ornaments/${editId}`,
         ornament
       )
       .then(() => {
@@ -86,7 +86,7 @@ function OrnamentPage() {
 
     axios
       .delete(
-        `${import.meta.env.VITE_API_URL}/ornaments/${id}`
+        `/ornaments/${id}`
       )
       .then(() => {
         alert(
@@ -118,7 +118,7 @@ function OrnamentPage() {
 
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/ornaments/category/${searchCategory}`
+        `/ornaments/category/${searchCategory}`
       )
       .then((response) => {
         setOrnaments(response.data);

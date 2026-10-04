@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api';
 import { Modal } from "react-bootstrap";
 import "./CustomerPage.css";
 
@@ -29,7 +29,7 @@ function CustomerPage() {
 
   const loadCustomers = () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/customers`)
+      .get(`/customers`)
       .then((response) => {
         setCustomers(response.data);
       })
@@ -40,7 +40,7 @@ function CustomerPage() {
 
   const saveCustomer = () => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/customers`, customer)
+      .post(`/customers`, customer)
       .then(() => {
         alert("Customer Saved Successfully");
         setShowModal(false);
@@ -61,7 +61,7 @@ function CustomerPage() {
   const updateCustomer = () => {
     axios
       .put(
-        `${import.meta.env.VITE_API_URL}/customers/${editId}`,
+        `/customers/${editId}`,
         customer
       )
       .then(() => {
@@ -85,7 +85,7 @@ function CustomerPage() {
     if (!window.confirm("Delete this customer?")) return;
 
     axios
-      .delete(`${import.meta.env.VITE_API_URL}/customers/${id}`)
+      .delete(`/customers/${id}`)
       .then(() => {
         alert("Customer Deleted Successfully");
         loadCustomers();
@@ -98,7 +98,7 @@ function CustomerPage() {
   const searchCustomer = () => {
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/customers/phone/${searchPhone}`
+        `/customers/phone/${searchPhone}`
       )
       .then((response) => {
         setCustomers(response.data);
@@ -110,7 +110,7 @@ function CustomerPage() {
   const searchCustomerById = () => {
 
   axios
-    .get(`${import.meta.env.VITE_API_URL}/customers/${searchId}`)
+    .get(`/customers/${searchId}`)
     .then((response) => {
 
       setCustomers(response.data);
@@ -127,7 +127,7 @@ function CustomerPage() {
 const searchCustomerByName = () => {
 
   axios
-    .get(`${import.meta.env.VITE_API_URL}/customers/name/${searchName}`)
+    .get(`/customers/name/${searchName}`)
     .then((response) => {
 
       setCustomers(response.data);

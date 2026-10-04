@@ -2,15 +2,19 @@ package com.goldshop.controller;
 
 import java.util.List;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import com.goldshop.entity.Customer;
 import com.goldshop.entity.Purchase;
+import com.goldshop.entity.User;
+import com.goldshop.entity.UserRole;
+import com.goldshop.repository.CustomerRepository;
 import com.goldshop.service.PurchaseService;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @CrossOrigin(origins = "${FRONTEND_URL:http://localhost:5173}")
 @RestController
@@ -19,48 +23,106 @@ public class PurchaseController {
 
     @Autowired
     private PurchaseService service;
+    
+    @Autowired
+    private CustomerRepository customerRepo;
+
+    private User getAuthenticatedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof User) {
+            return (User) auth.getPrincipal();
+        }
+        return null;
+    }
+
+    private Customer getCustomerForUser(User user) {
+        return customerRepo.findByUserId(user.getId());
+    }
+
+    private boolean isStaffOrAdmin(User user) {
+        return user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.MANAGER || user.getRole() == UserRole.STAFF;
+    }
 
     @GetMapping
-    public List<Purchase> getAllPurchases() {
-        return service.getAllPurchases();
+    public ResponseEntity<List<Purchase>> getAllPurchases() {
+        User user = getAuthenticatedUser();
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        if (isStaffOrAdmin(user)) {
+            return ResponseEntity.ok(service.getAllPurchases());
+        }
+
+        Customer customer = getCustomerForUser(user);
+        if (customer == null) {
+            return ResponseEntity.ok(List.of()); // No customer profile yet
+        }
+        return ResponseEntity.ok(service.getPurchasesByCustomerId(customer.getCustomerId()));
     }
 
     @PostMapping
-    public Purchase savePurchase(@RequestBody Purchase purchase) {
-        return service.savePurchase(purchase);
+    public ResponseEntity<?> savePurchase(@RequestBody Purchase purchase) {
+        User user = getAuthenticatedUser();
+        if (!isStaffOrAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only staff can create purchases.");
+        }
+        return ResponseEntity.ok(service.savePurchase(purchase));
     }
+    
     @GetMapping("/pending")
-    public List<Purchase> getPendingBalances() {
-        return service.getPendingBalances();
+    public ResponseEntity<List<Purchase>> getPendingBalances() {
+        User user = getAuthenticatedUser();
+        if (!isStaffOrAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(service.getPendingBalances());
     }
+    
     @DeleteMapping("/{id}")
-    public String deletePurchase(@PathVariable Integer id) {
-
+    public ResponseEntity<String> deletePurchase(@PathVariable Integer id) {
+        User user = getAuthenticatedUser();
+        if (!isStaffOrAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+        }
         service.deletePurchase(id);
-
-        return "Purchase Deleted Successfully";
+        return ResponseEntity.ok("Purchase Deleted Successfully");
     }
+    
     @GetMapping("/customer/{name}")
-    public List<Purchase> getPurchasesByCustomerName(
-            @PathVariable String name) {
-
-        return service
-                .getPurchasesByCustomerName(name);
+    public ResponseEntity<List<Purchase>> getPurchasesByCustomerName(@PathVariable String name) {
+        User user = getAuthenticatedUser();
+        if (!isStaffOrAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(service.getPurchasesByCustomerName(name));
     }
+    
     @GetMapping("/{id}")
-    public Purchase getPurchaseById(
-            @PathVariable Integer id) {
+    public ResponseEntity<?> getPurchaseById(@PathVariable Integer id) {
+        User user = getAuthenticatedUser();
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        return service.getPurchaseById(id);
+        Purchase purchase = service.getPurchaseById(id);
+        if (purchase == null) return ResponseEntity.notFound().build();
+
+        if (isStaffOrAdmin(user)) {
+            return ResponseEntity.ok(purchase);
+        }
+
+        Customer customer = getCustomerForUser(user);
+        if (customer == null || !customer.getCustomerId().equals(purchase.getCustomerId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+        }
+
+        return ResponseEntity.ok(purchase);
     }
 
     @PutMapping("/{id}")
-    public Purchase updatePurchase(
-            @PathVariable Integer id,
-            @RequestBody Purchase purchase) {
-
+    public ResponseEntity<?> updatePurchase(@PathVariable Integer id, @RequestBody Purchase purchase) {
+        User user = getAuthenticatedUser();
+        if (!isStaffOrAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+        }
         purchase.setPurchaseId(id);
-
-        return service.savePurchase(purchase);
+        return ResponseEntity.ok(service.savePurchase(purchase));
     }
 }

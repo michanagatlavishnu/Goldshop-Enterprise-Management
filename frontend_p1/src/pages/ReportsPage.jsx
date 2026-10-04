@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../api';
 import "./ReportsPage.css";
 
 import {
@@ -30,7 +30,7 @@ function ReportsPage() {
   useEffect(() => {
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/dashboard/summary`)
+      .get(`/dashboard/summary`)
       .then((response) => {
         setSummary(response.data);
       })
@@ -39,7 +39,7 @@ function ReportsPage() {
       });
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/ornaments/low-stock`)
+      .get(`/ornaments/low-stock`)
       .then((response) => {
         setLowStockCount(response.data.length);
       })

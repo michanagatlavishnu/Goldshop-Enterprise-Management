@@ -15,6 +15,8 @@ public interface PurchaseRepository
 
 	long countByBalanceAmountEquals(Double amount);
 	
+	List<Purchase> findByCustomerId(Integer customerId);
+	
 	@Query("""
 			SELECT p
 			FROM Purchase p
