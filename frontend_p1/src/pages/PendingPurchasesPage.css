@@ -1,0 +1,99 @@
+.pending-page{
+  padding:10px;
+  background-color: #d9c3a6;
+}
+
+.pending-title{
+  font-size:42px;
+  font-weight:700;
+  color:#2E311A;
+}
+
+.search-card{
+  background:#92643E;
+  padding:25px;
+  border-radius:20px;
+  margin-bottom:30px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.search-row{
+  display:flex;
+  gap:15px;
+}
+
+.search-btn{
+  background:#710927;
+  color:white;
+  border:none;
+  padding:0 25px;
+  border-radius:10px;
+  font-weight:600;
+}
+
+.show-all-btn{
+  background:#AD8330;
+  color:white;
+  border:none;
+  padding:0 25px;
+  border-radius:10px;
+  font-weight:600;
+}
+
+.pending-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fill,
+    minmax(320px,1fr));
+  gap:25px;
+}
+
+.pending-card{
+  background:#ecdcab;
+  border-radius:20px;
+  padding:25px;
+  border:3px solid #AD8330;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  transition:all .3s ease;
+}
+
+.pending-card:hover{
+
+  transform:
+    translateY(-8px);
+
+  box-shadow:
+    0 12px 30px
+    rgba(212,175,55,.35);
+
+}
+
+.pending-card h3{
+  color:#92643E;
+  font-weight:700;
+  margin-bottom:20px;
+}
+
+.pending-card p{
+  margin-bottom:12px;
+  font-size:17px;
+  color:#333;
+}
+
+.status-badge{
+  margin-top:18px;
+  text-align:center;
+  background:#fff3cd;
+  padding:10px;
+  border-radius:12px;
+  font-weight:700;
+  border:1px solid #AD8330;
+}
+
+@media(max-width:768px){
+
+  .search-row{
+    flex-direction:column;
+  }
+
+}
