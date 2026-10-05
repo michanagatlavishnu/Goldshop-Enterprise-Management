@@ -4,8 +4,12 @@ public class DashboardSummary {
 
     private long totalCustomers;
     private long totalOrnaments;
-    private long pendingPayments;
+    private long pendingPayments; // or pendingPurchases
     private long clearedPurchases;
+    private long totalUsers;
+    private long totalPurchases;
+    private double todaysSales;
+    private double totalRevenue;
 
     public long getTotalCustomers() {
         return totalCustomers;
@@ -38,4 +42,16 @@ public class DashboardSummary {
     public void setPendingPayments(long pendingPayments) {
         this.pendingPayments = pendingPayments;
     }
+
+    public long getTotalUsers() { return totalUsers; }
+    public void setTotalUsers(long totalUsers) { this.totalUsers = totalUsers; }
+
+    public long getTotalPurchases() { return totalPurchases; }
+    public void setTotalPurchases(long totalPurchases) { this.totalPurchases = totalPurchases; }
+
+    public double getTodaysSales() { return todaysSales; }
+    public void setTodaysSales(double todaysSales) { this.todaysSales = todaysSales; }
+
+    public double getTotalRevenue() { return totalRevenue; }
+    public void setTotalRevenue(double totalRevenue) { this.totalRevenue = totalRevenue; }
 }

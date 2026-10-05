@@ -13,10 +13,12 @@ import PurchasePage from "./pages/PurchasePage";
 import PendingPurchasesPage from "./pages/PendingPurchasesPage";
 import ReportsPage from "./pages/ReportsPage";
 import UsersPage from "./pages/UsersPage";
+import AdminGoldRatesPage from "./pages/AdminGoldRatesPage";
 
-// Customer Pages (Placeholder components for now to prevent errors)
-const CustomerHome = () => <div><h2>Customer Home</h2><p>Welcome to your premium jewellery portal.</p></div>;
-const CustomerProfile = () => <div><h2>My Profile</h2><p>Manage your details here.</p></div>;
+import CustomerHomePage from "./pages/CustomerHomePage";
+import CustomerOrnamentsPage from "./pages/CustomerOrnamentsPage";
+import CustomerPurchasesPage from "./pages/CustomerPurchasesPage";
+import CustomerProfilePage from "./pages/CustomerProfilePage";
 
 function App() {
   return (
@@ -34,6 +36,7 @@ function App() {
           <Route path="ornaments" element={<OrnamentPage />} />
           <Route path="purchases" element={<PurchasePage />} />
           <Route path="pending" element={<PendingPurchasesPage />} />
+          <Route path="goldrates" element={<AdminGoldRatesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="users" element={<UsersPage />} />
         </Route>
@@ -41,8 +44,10 @@ function App() {
         {/* CUSTOMER PORTAL */}
         <Route path="/customer" element={<CustomerLayout />}>
           <Route index element={<Navigate to="home" />} />
-          <Route path="home" element={<CustomerHome />} />
-          <Route path="profile" element={<CustomerProfile />} />
+          <Route path="home" element={<CustomerHomePage />} />
+          <Route path="ornaments" element={<CustomerOrnamentsPage />} />
+          <Route path="purchases" element={<CustomerPurchasesPage />} />
+          <Route path="profile" element={<CustomerProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

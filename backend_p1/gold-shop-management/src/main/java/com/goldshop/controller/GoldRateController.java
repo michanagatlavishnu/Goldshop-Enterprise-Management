@@ -21,12 +21,12 @@ public class GoldRateController {
 
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     @PutMapping
     public GoldRate updateRates(
             @RequestBody GoldRate goldRate) {
-
+        goldRate.setLastUpdated(java.time.LocalDateTime.now());
         return service.updateRates(goldRate);
-
     }
 
 }

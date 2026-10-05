@@ -21,10 +21,11 @@ export default function AdminLayout() {
         style={{
           flex: 1,
           padding: '30px',
-          marginLeft: '300px',
+          marginLeft: '250px',
           minHeight: '100vh',
-          width: 'calc(100% - 300px)',
-          backgroundColor: '#f5f5f5'
+          width: 'calc(100% - 250px)',
+          backgroundColor: '#121212',
+          color: '#fff'
         }}
       >
         <Outlet />

@@ -18,7 +18,27 @@ public class OrnamentService {
         return repo.findAll();
     }
 
+    @Autowired
+    private GoldRateService goldRateService;
+
+    private void calculatePrice(Ornament ornament) {
+        com.goldshop.entity.GoldRate rate = goldRateService.getRates();
+        if (rate != null) {
+            double ratePerGram = 0.0;
+            if ("24K".equalsIgnoreCase(ornament.getPurity())) ratePerGram = rate.getGold24() / 10.0;
+            else if ("22K".equalsIgnoreCase(ornament.getPurity())) ratePerGram = rate.getGold22() / 10.0;
+            else if ("18K".equalsIgnoreCase(ornament.getPurity())) ratePerGram = rate.getGold18() / 10.0;
+
+            if (ratePerGram > 0 && ornament.getWeight() != null) {
+                double basePrice = ratePerGram * ornament.getWeight();
+                double making = ornament.getMakingCharge() != null ? ornament.getMakingCharge() : 0.0;
+                ornament.setPrice(basePrice + making);
+            }
+        }
+    }
+
     public Ornament saveOrnament(Ornament ornament) {
+        calculatePrice(ornament);
         return repo.save(ornament);
     }
     public Ornament getOrnamentById(Integer id) {
@@ -33,12 +53,9 @@ public class OrnamentService {
     public void deleteOrnament(Integer id) {
         repo.deleteById(id);
     }
-    public Ornament updateOrnament(
-            Integer id,
-            Ornament ornament) {
-
+    public Ornament updateOrnament(Integer id, Ornament ornament) {
         ornament.setOrnamentId(id);
-
+        calculatePrice(ornament);
         return repo.save(ornament);
     }
 }

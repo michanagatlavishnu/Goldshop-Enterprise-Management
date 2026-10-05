@@ -62,10 +62,20 @@ public class PurchaseController {
     @PostMapping
     public ResponseEntity<?> savePurchase(@RequestBody Purchase purchase) {
         User user = getAuthenticatedUser();
-        if (!isStaffOrAdmin(user)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only staff can create purchases.");
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        if (isStaffOrAdmin(user)) {
+            return ResponseEntity.ok(service.savePurchase(purchase));
+        } else {
+            Customer customer = getCustomerForUser(user);
+            if (customer == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No customer profile found.");
+            }
+            purchase.setCustomerId(customer.getCustomerId());
+            purchase.setStatus("PENDING");
+            purchase.setPurchaseDate(java.time.LocalDate.now().toString());
+            return ResponseEntity.ok(service.savePurchase(purchase));
         }
-        return ResponseEntity.ok(service.savePurchase(purchase));
     }
     
     @GetMapping("/pending")

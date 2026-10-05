@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @CrossOrigin(origins = "${FRONTEND_URL:http://localhost:5173}")
 @RestController
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
 public class DashboardController {
 
     @Autowired

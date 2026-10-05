@@ -28,7 +28,12 @@ public interface PurchaseRepository
 			LIKE LOWER(CONCAT('%', :name, '%'))
 			)
 			""")
-			List<Purchase> findByCustomerName(
-			        @Param("name") String name);
+	List<Purchase> findByCustomerName(@Param("name") String name);
+
+    @Query("SELECT SUM(p.totalCost) FROM Purchase p WHERE p.status != 'CANCELLED'")
+    Double getTotalRevenue();
+
+    @Query("SELECT SUM(p.totalCost) FROM Purchase p WHERE p.status != 'CANCELLED' AND p.purchaseDate LIKE CONCAT(:datePrefix, '%')")
+    Double getTodaysSales(@Param("datePrefix") String datePrefix);
 }
 

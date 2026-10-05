@@ -37,18 +37,21 @@ public class OrnamentController {
     public List<Ornament> getLowStockOrnaments() {
         return service.getLowStockOrnaments();
     }
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     @PutMapping("/{id}")
     public Ornament updateOrnament(
             @PathVariable Integer id,
             @RequestBody Ornament ornament) {
-
         return service.updateOrnament(id, ornament);
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     @PostMapping
     public Ornament saveOrnament(@RequestBody Ornament ornament) {
         return service.saveOrnament(ornament);
     }
+    
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     @DeleteMapping("/{id}")
     public String deleteOrnament(@PathVariable Integer id) {
         service.deleteOrnament(id);

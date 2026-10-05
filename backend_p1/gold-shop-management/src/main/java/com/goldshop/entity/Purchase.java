@@ -1,6 +1,8 @@
 package com.goldshop.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -9,73 +11,98 @@ import jakarta.persistence.Table;
 public class Purchase {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer purchaseId;
 
-    private Integer customerId;
+    private Integer customerId; // The Customer ID making the purchase
+    private Integer ornamentId;
+    
+    private Integer quantity;
+    private Double totalWeight; // gold weight
+    private Double totalCost; // total amount
+    private String status; // PENDING, CONFIRMED, COMPLETED, CANCELLED
+    
+    private Double paidAmount;
+    private Double balanceAmount;
+    private String purchaseDate;
 
     public Integer getPurchaseId() {
-		return purchaseId;
-	}
+        return purchaseId;
+    }
 
-	public void setPurchaseId(Integer purchaseId) {
-		this.purchaseId = purchaseId;
-	}
+    public void setPurchaseId(Integer purchaseId) {
+        this.purchaseId = purchaseId;
+    }
 
-	public Integer getCustomerId() {
-		return customerId;
-	}
+    public Integer getCustomerId() {
+        return customerId;
+    }
 
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
-	}
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
+    }
 
-	public Integer getOrnamentId() {
-		return ornamentId;
-	}
+    public Integer getOrnamentId() {
+        return ornamentId;
+    }
 
-	public void setOrnamentId(Integer ornamentId) {
-		this.ornamentId = ornamentId;
-	}
+    public void setOrnamentId(Integer ornamentId) {
+        this.ornamentId = ornamentId;
+    }
 
-	public Double getTotalCost() {
-		return totalCost;
-	}
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-	public void setTotalCost(Double totalCost) {
-		this.totalCost = totalCost;
-	}
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
-	public Double getPaidAmount() {
-		return paidAmount;
-	}
+    public Double getTotalWeight() {
+        return totalWeight;
+    }
 
-	public void setPaidAmount(Double paidAmount) {
-		this.paidAmount = paidAmount;
-	}
+    public void setTotalWeight(Double totalWeight) {
+        this.totalWeight = totalWeight;
+    }
 
-	public Double getBalanceAmount() {
-		return balanceAmount;
-	}
+    public Double getTotalCost() {
+        return totalCost;
+    }
 
-	public void setBalanceAmount(Double balanceAmount) {
-		this.balanceAmount = balanceAmount;
-	}
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
+    }
 
-	public String getPurchaseDate() {
-		return purchaseDate;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setPurchaseDate(String purchaseDate) {
-		this.purchaseDate = purchaseDate;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	private Integer ornamentId;
+    public Double getPaidAmount() {
+        return paidAmount;
+    }
 
-    private Double totalCost;
+    public void setPaidAmount(Double paidAmount) {
+        this.paidAmount = paidAmount;
+    }
 
-    private Double paidAmount;
+    public Double getBalanceAmount() {
+        return balanceAmount;
+    }
 
-    private Double balanceAmount;
+    public void setBalanceAmount(Double balanceAmount) {
+        this.balanceAmount = balanceAmount;
+    }
 
-    private String purchaseDate;
+    public String getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(String purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
 }

@@ -3,8 +3,10 @@ package com.goldshop.controller;
 import com.goldshop.dto.AuthResponse;
 import com.goldshop.dto.LoginRequest;
 import com.goldshop.dto.RegisterRequest;
+import com.goldshop.entity.Customer;
 import com.goldshop.entity.User;
 import com.goldshop.entity.UserRole;
+import com.goldshop.repository.CustomerRepository;
 import com.goldshop.repository.UserRepository;
 import com.goldshop.security.JwtService;
 import jakarta.validation.Valid;
@@ -15,18 +17,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "${FRONTEND_URL:http://localhost:5173}")
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthController(UserRepository userRepository, CustomerRepository customerRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -35,7 +42,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            java.util.Map<String, Object> err = new java.util.HashMap<>();
+            Map<String, Object> err = new HashMap<>();
             err.put("status", 409);
             err.put("message", "An account with this email already exists");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
@@ -48,8 +55,13 @@ public class AuthController {
         user.setRole(UserRole.CUSTOMER); // Default public registration role
         
         userRepository.save(user);
+        
+        Customer customer = new Customer();
+        customer.setName(user.getName());
+        customer.setUserId(user.getId());
+        customerRepository.save(customer);
 
-        java.util.Map<String, Object> resp = new java.util.HashMap<>();
+        Map<String, Object> resp = new HashMap<>();
         resp.put("status", 201);
         resp.put("message", "User registered successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);

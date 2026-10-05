@@ -28,6 +28,12 @@ public class UserController {
     @PutMapping("/{id}/activate")
     public ResponseEntity<?> toggleActivation(@PathVariable Long id, @RequestParam boolean enabled) {
         User user = userRepository.findById(id).orElseThrow();
+        if (user.getRole() == UserRole.ADMIN && !enabled) {
+            long adminCount = userRepository.findAll().stream().filter(u -> u.getRole() == UserRole.ADMIN && u.isEnabled()).count();
+            if (adminCount <= 1) {
+                return ResponseEntity.badRequest().body("Cannot disable the last active admin.");
+            }
+        }
         user.setEnabled(enabled);
         userRepository.save(user);
         return ResponseEntity.ok("User status updated");
@@ -36,6 +42,12 @@ public class UserController {
     @PutMapping("/{id}/role")
     public ResponseEntity<?> updateRole(@PathVariable Long id, @RequestParam UserRole role) {
         User user = userRepository.findById(id).orElseThrow();
+        if (user.getRole() == UserRole.ADMIN && role != UserRole.ADMIN) {
+            long adminCount = userRepository.findAll().stream().filter(u -> u.getRole() == UserRole.ADMIN && u.isEnabled()).count();
+            if (adminCount <= 1) {
+                return ResponseEntity.badRequest().body("Cannot remove the last active admin.");
+            }
+        }
         user.setRole(role);
         userRepository.save(user);
         return ResponseEntity.ok("User role updated");

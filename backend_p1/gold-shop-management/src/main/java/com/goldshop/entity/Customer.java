@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 public class Customer {
 
     @Id
+    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Integer customerId;
 
     private String name;

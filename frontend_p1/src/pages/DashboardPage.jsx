@@ -1,453 +1,129 @@
-import { useEffect, useState } from "react";
-import axios from '../api';
-import { Modal } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import axios from "../api";
+import { Modal, Button } from "react-bootstrap";
 import "./DashboardPage.css";
 
 function DashboardPage() {
-
   const [summary, setSummary] = useState({
     totalCustomers: 0,
+    totalUsers: 0,
     totalOrnaments: 0,
-    pendingPayments: 0
+    totalPurchases: 0,
+    pendingPayments: 0,
+    clearedPurchases: 0,
+    todaysSales: 0,
+    totalRevenue: 0
   });
 
-  const [lowStockCount, setLowStockCount] =
-    useState(0);
-
-  const [showRateModal, setShowRateModal] =
-    useState(false);
-
-  const [goldRates, setGoldRates] =
-    useState({
-      id: 1,
-      gold22: 0,
-      gold24: 0,
-      silver: 0,
-      yesterdayGold22: 0
-    });
-
-  const images = [
-    "/jwellery.jpg",
-    "/necklace.jpg",
-    "/Bangles.jpg"
-  ];
-
-  const [currentImage, setCurrentImage] =
-    useState(0);
+  const [goldRates, setGoldRates] = useState(null);
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [rateForm, setRateForm] = useState({
+    gold24: 0, gold22: 0, gold18: 0, silver: 0, yesterdayGold22: 0
+  });
 
   useEffect(() => {
-
     loadDashboard();
-
   }, []);
 
-  const loadDashboard = () => {
-
-    axios
-      .get(
-        `/dashboard/summary`
-      )
-      .then((response) => {
-
-        setSummary(response.data);
-
-      })
-      .catch((error) => {
-
-        console.log(error);
-
-      });
-
-    axios
-      .get(
-        `/ornaments/low-stock`
-      )
-      .then((response) => {
-
-        setLowStockCount(
-          response.data.length
-        );
-
-      })
-      .catch((error) => {
-
-        console.log(error);
-
-      });
-
-    axios
-      .get(
-        `/goldrates`
-      )
-      .then((response) => {
-
-        setGoldRates(
-          response.data
-        );
-
-      })
-      .catch((error) => {
-
-        console.log(error);
-
-      });
-
+  const loadDashboard = async () => {
+    try {
+      const summaryRes = await axios.get('/dashboard/summary');
+      setSummary(summaryRes.data);
+      const rateRes = await axios.get('/goldrates');
+      if (rateRes.data) {
+        setGoldRates(rateRes.data);
+        setRateForm(rateRes.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  useEffect(() => {
-
-    const interval =
-      setInterval(() => {
-
-        setCurrentImage((prev) =>
-          prev === images.length - 1
-            ? 0
-            : prev + 1
-        );
-
-      }, 3000);
-
-    return () =>
-      clearInterval(interval);
-
-  }, []);
-
-  const saveRates = () => {
-
-    axios
-      .put(
-        `/goldrates`,
-        goldRates
-      )
-      .then(() => {
-
-        alert(
-          "Rates Updated Successfully"
-        );
-
-        setShowRateModal(false);
-
-        loadDashboard();
-
-      })
-      .catch((error) => {
-
-        console.log(error);
-
-      });
-
+  const saveRates = async () => {
+    try {
+      await axios.put('/goldrates', rateForm);
+      alert("Rates Updated Successfully");
+      setShowRateModal(false);
+      loadDashboard();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update rates");
+    }
   };
-
-  const trendValue =
-    (goldRates.gold22 || 0) -
-    (goldRates.yesterdayGold22 || 0);
 
   return (
+    <div style={{ padding: '20px', color: '#fff' }}>
+      <h1 style={{ color: '#D4AF37', borderBottom: '1px solid #333', paddingBottom: '10px' }}>Dashboard Overview</h1>
 
-    <div className="dashboard-container">
-
-      {/* HEADER */}
-
-      <div className="premium-header">
-
-        <div className="header-left">
-
-          <img
-            src="/LOGO.png"
-            alt="ABC Jewellers"
-            className="premium-logo"
-          />
-
-          <div>
-
-            <h1 className="premium-title">
-              ABC REDDY JEWELLERS
-            </h1>
-
-            <p className="premium-subtitle">
-              Since 2004 • Trusted Jewellery Destination
-            </p>
-
-          </div>
-
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '20px' }}>
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          <h3 style={{ color: '#ccc', margin: 0, fontSize: '1rem' }}>Total Revenue</h3>
+          <p style={{ color: '#D4AF37', fontSize: '2rem', margin: '10px 0 0 0', fontWeight: 'bold' }}>₹{summary.totalRevenue?.toLocaleString()}</p>
         </div>
-
-        <div className="header-contact">
-
-          <span>
-            📍 Main Road, Cumbum
-          </span>
-
-          <span>
-            📞 +91 9866881191
-          </span>
-
-          <span>
-            ✉ abcreddyjewellers@gmail.com
-          </span>
-
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          <h3 style={{ color: '#ccc', margin: 0, fontSize: '1rem' }}>Today's Sales</h3>
+          <p style={{ color: '#D4AF37', fontSize: '2rem', margin: '10px 0 0 0', fontWeight: 'bold' }}>₹{summary.todaysSales?.toLocaleString()}</p>
         </div>
-
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          <h3 style={{ color: '#ccc', margin: 0, fontSize: '1rem' }}>Pending Payments</h3>
+          <p style={{ color: '#D4AF37', fontSize: '2rem', margin: '10px 0 0 0', fontWeight: 'bold' }}>{summary.pendingPayments}</p>
+        </div>
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          <h3 style={{ color: '#ccc', margin: 0, fontSize: '1rem' }}>Customers</h3>
+          <p style={{ color: '#D4AF37', fontSize: '2rem', margin: '10px 0 0 0', fontWeight: 'bold' }}>{summary.totalCustomers}</p>
+        </div>
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          <h3 style={{ color: '#ccc', margin: 0, fontSize: '1rem' }}>Users</h3>
+          <p style={{ color: '#D4AF37', fontSize: '2rem', margin: '10px 0 0 0', fontWeight: 'bold' }}>{summary.totalUsers}</p>
+        </div>
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          <h3 style={{ color: '#ccc', margin: 0, fontSize: '1rem' }}>Ornaments</h3>
+          <p style={{ color: '#D4AF37', fontSize: '2rem', margin: '10px 0 0 0', fontWeight: 'bold' }}>{summary.totalOrnaments}</p>
+        </div>
       </div>
 
-      {/* GOLD RATE + TREND */}
-
-      <div className="rate-trend-row">
-
-        <div className="rate-card">
-
-          <div className="rate-header">
-
-            <h2>
-              Today's Gold & Silver Rate
-            </h2>
-
-            <button
-              className="edit-rate-btn"
-              onClick={() =>
-                setShowRateModal(true)
-              }
-            >
-              ✏ Edit
-            </button>
-
-          </div>
-
-          <div className="rate-item">
-            22K Gold :
-            ₹ {goldRates.gold22}
-            / gram
-          </div>
-
-          <div className="rate-item">
-            24K Gold :
-            ₹ {goldRates.gold24}
-            / gram
-          </div>
-
-          <div className="rate-item">
-            Silver :
-            ₹ {goldRates.silver}
-            / gram
-          </div>
-
+      <div style={{ marginTop: '40px' }}>
+        <h2 style={{ color: '#D4AF37', borderBottom: '1px solid #333', paddingBottom: '10px' }}>Live Gold Rates</h2>
+        <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+          {goldRates ? (
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div style={{ flex: 1 }}><strong>24K Gold:</strong> ₹{goldRates.gold24}/10g</div>
+              <div style={{ flex: 1 }}><strong>22K Gold:</strong> ₹{goldRates.gold22}/10g</div>
+              <div style={{ flex: 1 }}><strong>18K Gold:</strong> ₹{goldRates.gold18}/10g</div>
+              <div style={{ flex: 1 }}><strong>Silver:</strong> ₹{goldRates.silver}/10g</div>
+              <button 
+                onClick={() => setShowRateModal(true)}
+                style={{ background: '#D4AF37', color: '#000', padding: '8px 16px', border: 'none', borderRadius: '4px', fontWeight: 'bold' }}
+              >
+                Update Rates
+              </button>
+            </div>
+          ) : <p>Loading rates...</p>}
         </div>
-
-        <div className="trend-card">
-
-          <h2>
-            Gold Trend
-          </h2>
-
-          <div className="trend-up">
-
-             +{trendValue}
-
-            <span>
-              Today
-            </span>
-
-          </div>
-
-          <div className="trend-down">
-
-            -
-            {Math.floor(
-              trendValue / 2
-            )}
-
-            <span>
-              Yesterday
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-            {/* LARGE SLIDER */}
-
-      <div className="premium-slider">
-
-        <img
-          src={images[currentImage]}
-          alt="Jewellery"
-          className="premium-slider-image"
-        />
-
       </div>
 
-      {/* REPORTS SUMMARY */}
-
-      <div className="reports-card">
-
-        <h2 className="reports-title">
-          Reports Summary
-        </h2>
-
-        <div className="report-item">
-
-          <span>
-            👥 Total Customers
-          </span>
-
-          <strong>
-            {summary.totalCustomers}
-          </strong>
-
-        </div>
-
-        <div className="report-item">
-
-          <span>
-            💍 Total Ornaments
-          </span>
-
-          <strong>
-            {summary.totalOrnaments}
-          </strong>
-
-        </div>
-
-        <div className="report-item">
-
-          <span>
-            💰 Pending Payments
-          </span>
-
-          <strong>
-            {summary.pendingPayments}
-          </strong>
-
-        </div>
-
-        <div className="report-item">
-
-          <span>
-            ⚠ Low Stock Items
-          </span>
-
-          <strong>
-            {lowStockCount}
-          </strong>
-
-        </div>
-
-      </div>
-
-      {/* EDIT RATE MODAL */}
-
-      <Modal
-        show={showRateModal}
-        onHide={() =>
-          setShowRateModal(false)
-        }
-        centered
-      >
-
+      <Modal show={showRateModal} onHide={() => setShowRateModal(false)} centered>
         <Modal.Header closeButton>
-
-          <Modal.Title>
-            Update Gold Rates
-          </Modal.Title>
-
+          <Modal.Title style={{ color: '#000' }}>Update Gold Rates</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
-
-          <input
-            type="number"
-            className="form-control mb-3"
-            placeholder="22K Gold Rate"
-            value={goldRates.gold22}
-            onChange={(e) =>
-              setGoldRates({
-                ...goldRates,
-                gold22: e.target.value
-              })
-            }
-          />
-
-          <input
-            type="number"
-            className="form-control mb-3"
-            placeholder="24K Gold Rate"
-            value={goldRates.gold24}
-            onChange={(e) =>
-              setGoldRates({
-                ...goldRates,
-                gold24: e.target.value
-              })
-            }
-          />
-
-          <input
-            type="number"
-            className="form-control mb-3"
-            placeholder="Silver Rate"
-            value={goldRates.silver}
-            onChange={(e) =>
-              setGoldRates({
-                ...goldRates,
-                silver: e.target.value
-              })
-            }
-          />
-
-          <input
-            type="number"
-            className="form-control"
-            placeholder="Yesterday Gold Rate"
-            value={
-              goldRates.yesterdayGold22
-            }
-            onChange={(e) =>
-              setGoldRates({
-                ...goldRates,
-                yesterdayGold22:
-                  e.target.value
-              })
-            }
-          />
-
+          <label>24K Gold</label>
+          <input type="number" className="form-control mb-2" value={rateForm.gold24} onChange={(e) => setRateForm({...rateForm, gold24: e.target.value})} />
+          <label>22K Gold</label>
+          <input type="number" className="form-control mb-2" value={rateForm.gold22} onChange={(e) => setRateForm({...rateForm, gold22: e.target.value})} />
+          <label>18K Gold</label>
+          <input type="number" className="form-control mb-2" value={rateForm.gold18} onChange={(e) => setRateForm({...rateForm, gold18: e.target.value})} />
+          <label>Silver</label>
+          <input type="number" className="form-control mb-2" value={rateForm.silver} onChange={(e) => setRateForm({...rateForm, silver: e.target.value})} />
         </Modal.Body>
-
         <Modal.Footer>
-
-          <button
-            className="save-rate-btn"
-            onClick={saveRates}
-          >
-            Save Rates
-          </button>
-
+          <Button variant="secondary" onClick={() => setShowRateModal(false)}>Cancel</Button>
+          <Button variant="primary" onClick={saveRates} style={{ background: '#D4AF37', borderColor: '#D4AF37', color: '#000' }}>Save Rates</Button>
         </Modal.Footer>
-
       </Modal>
 
-      {/* FOOTER */}
-
-      <div className="premium-footer">
-
-        <h4>
-          ABC REDDY JEWELLERS
-        </h4>
-
-        <p>
-          Crafting memories in gold,
-          one masterpiece at a time.
-        </p>
-
-        <span>
-          © All Rights Reserved
-        </span>
-
-      </div>
-
     </div>
-
   );
-
 }
 
 export default DashboardPage;
